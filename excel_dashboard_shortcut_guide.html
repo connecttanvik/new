@@ -1,0 +1,436 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.guide{padding:1.5rem 0;max-width:680px}
+.hero{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+.hero-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.hero-sub{font-size:13px;color:var(--color-text-secondary)}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin:1.5rem 0 .75rem}
+.step{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden}
+.step-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.step-header:hover{background:var(--color-background-secondary)}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.step-title{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1}
+.step-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
+.step-body{padding:0 16px 16px 56px;display:none}
+.step.open .step-body{display:block}
+.step.open .chevron{transform:rotate(180deg)}
+.chevron{transition:transform .2s;color:var(--color-text-secondary);font-size:16px}
+.kbd{display:inline-block;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:5px;padding:2px 8px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-primary);white-space:nowrap}
+.action-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid transparent}
+.action-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.action-text{font-size:13px;color:var(--color-text-primary);line-height:1.6}
+.action-text strong{font-weight:500}
+.swatch-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.swatch{height:28px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:500;border:0.5px solid rgba(0,0,0,.08);white-space:nowrap}
+.preview-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-top:12px}
+.preview-hdr{background:#0F172A;color:#fff;font-size:11px;padding:6px 10px;font-weight:500;letter-spacing:.04em;display:flex;gap:8px}
+.hdr-seg{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+.preview-row{display:flex;border-bottom:0.5px solid #E2E8F0;font-size:11px}
+.preview-row:last-child{border-bottom:none}
+.preview-cell{padding:6px 10px;border-right:0.5px solid #E2E8F0;white-space:nowrap;font-size:11px}
+.preview-cell:last-child{border-right:none}
+.preview-row.stripe{background:#F7F8FC}
+.tip{background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--color-text-info);display:flex;gap:8px;align-items:flex-start}
+.progress{display:flex;gap:4px;margin-top:1rem}
+.progress-dot{width:8px;height:8px;border-radius:50%;background:var(--color-border-secondary);transition:background .2s}
+.progress-dot.done{background:#10B981}
+.progress-dot.active{background:#6366F1}
+</style>
+
+<div class="guide">
+  <div class="hero">
+    <div class="hero-title">KPI Dashboard — step-by-step replication guide</div>
+    <div class="hero-sub">12 steps · click each to expand · follow in order top to bottom</div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="section-label">Foundation (do these first — they change everything)</div>
+
+  <div class="step open" data-step="1">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#EEF2FF;color:#4338CA">1</div>
+      <div class="step-title">Hide gridlines — instant website feel</div>
+      <div class="step-badge" style="background:#EEF2FF;color:#4338CA">30 sec</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text">Go to <strong>View tab</strong> → uncheck <strong>Gridlines</strong><br>Shortcut: <span class="kbd">Alt</span> + <span class="kbd">W</span> then <span class="kbd">V</span> then <span class="kbd">G</span></div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">2</div>
+        <div class="action-text">Repeat on every sheet tab (Sheet2, Sheet3)<br>Click each sheet tab → <span class="kbd">Alt</span> <span class="kbd">W</span> <span class="kbd">V</span> <span class="kbd">G</span></div>
+      </div>
+      <div class="tip"><i class="ti ti-info-circle" aria-hidden="true"></i> This single step removes 80% of the "spreadsheet" look. All other formatting builds on a clean white canvas.</div>
+    </div>
+  </div>
+
+  <div class="step" data-step="2">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#FEF9C3;color:#854D0E">2</div>
+      <div class="step-title">Set row heights — web-table proportions</div>
+      <div class="step-badge" style="background:#FEF9C3;color:#854D0E">1 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#854D0E">1</div>
+        <div class="action-text">Click the <strong>row 1 header</strong> (the "1" on the left) to select entire row<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">O</span> <span class="kbd">H</span> → type <strong>42</strong> → <span class="kbd">Enter</span></div>
+      </div>
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#854D0E">2</div>
+        <div class="action-text">Click row 2 header → hold <span class="kbd">Shift</span> → click last row header (row 45)<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">O</span> <span class="kbd">H</span> → type <strong>22</strong> → <span class="kbd">Enter</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-step="3">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#0F172A;color:#fff">3</div>
+      <div class="step-title">Dark header — the single dark surface</div>
+      <div class="step-badge" style="background:#1E293B;color:#94A3B8">3 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text">Click row 1 header to select entire row<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">H</span> → click <strong>More Colors</strong> → <strong>Custom</strong> tab → enter hex <span class="kbd">0F172A</span> → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">2</div>
+        <div class="action-text">Still selecting row 1 → <span class="kbd">Ctrl</span> <span class="kbd">1</span> → Font tab<br>→ Color: <strong>White</strong> · Bold: ✓ · Name: <strong>Calibri</strong> · Size: <strong>8</strong> → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">3</div>
+        <div class="action-text">Still selecting row 1 → <span class="kbd">Ctrl</span> <span class="kbd">1</span> → Alignment tab<br>→ Horizontal: <strong>Center</strong> · Vertical: <strong>Center</strong> → OK</div>
+      </div>
+      <div class="preview-box">
+        <div class="preview-hdr">
+          <span class="hdr-seg" style="background:#6366F1">IDENTITY</span>
+          <span class="hdr-seg" style="background:#8B5CF6">ELIGIBILITY</span>
+          <span class="hdr-seg" style="background:#10B981">CONVERSIONS</span>
+          <span class="hdr-seg" style="background:#F43F5E">KPI SUMMARY</span>
+        </div>
+        <div class="preview-hdr" style="background:#0F172A;padding:8px 0;gap:0">
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B;border-left:3px solid #6366F1">Agent</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B">TL</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B">Pool</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B;border-left:3px solid #8B5CF6">Target</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B">Elig.</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B;border-left:3px solid #10B981">Conv.</div>
+          <div class="preview-cell" style="color:#fff;border-right:0.5px solid #1E293B">Score</div>
+          <div class="preview-cell" style="color:#fff;border-left:3px solid #F43F5E">KPI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Section accent borders (the "website card" effect)</div>
+
+  <div class="step" data-step="4">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#EEF2FF;color:#4338CA">4</div>
+      <div class="step-title">Top-border accents on header — one per section</div>
+      <div class="step-badge" style="background:#EEF2FF;color:#4338CA">5 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text">Select <strong>A1:C1</strong> → <span class="kbd">Ctrl</span> <span class="kbd">1</span> → Border tab → pick <strong>Medium</strong> line style → enter color <span class="kbd">6366F1</span> → click the <strong>Top border</strong> button only → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#8B5CF6">
+        <div class="action-num" style="background:#F5F3FF;color:#6D28D9">2</div>
+        <div class="action-text">Select <strong>D1:F1</strong> → same steps → color <span class="kbd">8B5CF6</span> → Top border only</div>
+      </div>
+      <div class="action-row" style="border-left-color:#06B6D4">
+        <div class="action-num" style="background:#ECFEFF;color:#0E7490">3</div>
+        <div class="action-text">Select <strong>G1</strong> → color <span class="kbd">06B6D4</span> → Top border only</div>
+      </div>
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#F0FDF4;color:#166534">4</div>
+        <div class="action-text">Select <strong>H1:M1</strong> → color <span class="kbd">10B981</span> → Top border only</div>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#EEF2FF;color:#3730A3">A–C · Identity · #6366F1</div>
+        <div class="swatch" style="background:#F5F3FF;color:#5B21B6">D–F · Eligibility · #8B5CF6</div>
+        <div class="swatch" style="background:#ECFEFF;color:#0E7490">G · Lead Source · #06B6D4</div>
+        <div class="swatch" style="background:#F0FDF4;color:#166534">H–M · Conversions · #10B981</div>
+        <div class="swatch" style="background:#FDF2F8;color:#9D174D">N–R · Deposits · #F472B6</div>
+        <div class="swatch" style="background:#F0FDFA;color:#0F766E">S–V · Commission · #14B8A6</div>
+        <div class="swatch" style="background:#FFF7ED;color:#9A3412">W–Z · Dials · #F97316</div>
+        <div class="swatch" style="background:#FAF5FF;color:#6B21A8">AA–AE · QA · #A78BFA</div>
+        <div class="swatch" style="background:#FFFBEB;color:#92400E">AF · Leaves · #FBBF24</div>
+        <div class="swatch" style="background:#FFF1F2;color:#9F1239">AG–AO · KPI · #F43F5E</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-step="5">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#F0FDF4;color:#166534">5</div>
+      <div class="step-title">Left accent bars on first col of each section</div>
+      <div class="step-badge" style="background:#F0FDF4;color:#166534">5 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text">Select <strong>col A</strong> (click A header) → <span class="kbd">Ctrl</span> <span class="kbd">1</span> → Border tab<br>→ Medium line style → color <span class="kbd">6366F1</span> → click <strong>Left border</strong> only → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#8B5CF6">
+        <div class="action-num" style="background:#F5F3FF;color:#6D28D9">2</div>
+        <div class="action-text">Select <strong>col D</strong> → Medium → color <span class="kbd">8B5CF6</span> → Left border only</div>
+      </div>
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#F0FDF4;color:#166534">3</div>
+        <div class="action-text">Repeat for every section start: G → <span class="kbd">06B6D4</span> · H → <span class="kbd">10B981</span> · N → <span class="kbd">F472B6</span> · S → <span class="kbd">14B8A6</span> · W → <span class="kbd">F97316</span> · AA → <span class="kbd">A78BFA</span> · AF → <span class="kbd">FBBF24</span> · AG → <span class="kbd">F43F5E</span></div>
+      </div>
+      <div class="tip"><i class="ti ti-info-circle" aria-hidden="true"></i> Pro tip: after doing col A, open Format Painter <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">F</span> <span class="kbd">P</span> then click each section-start column. Then just change the color in Ctrl+1 for each.</div>
+    </div>
+  </div>
+
+  <div class="step" data-step="6">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#F7F8FC;color:#334155">6</div>
+      <div class="step-title">Row borders — bottom line only, super light</div>
+      <div class="step-badge" style="background:#F7F8FC;color:#334155">2 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#94A3B8">
+        <div class="action-num" style="background:#F1F5F9;color:#475569">1</div>
+        <div class="action-text">Press <span class="kbd">Ctrl</span> <span class="kbd">A</span> to select all → <span class="kbd">Ctrl</span> <span class="kbd">1</span> → Border tab<br>→ First click <strong>None</strong> (clear all existing borders)</div>
+      </div>
+      <div class="action-row" style="border-left-color:#94A3B8">
+        <div class="action-num" style="background:#F1F5F9;color:#475569">2</div>
+        <div class="action-text">Choose <strong>Thin</strong> line style → change color to <span class="kbd">E2E8F0</span><br>→ click the <strong>Bottom border</strong> button only → OK</div>
+      </div>
+      <div class="preview-box" style="margin-top:12px">
+        <div class="preview-row">
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #6366F1;font-weight:500">Anjali</div>
+          <div class="preview-cell" style="border-right:none;background:#FDF4FF;color:#7E22CE;font-weight:500">Rehan</div>
+          <div class="preview-cell" style="border-right:none;background:#EEF2FF;color:#3730A3;font-weight:500">OJT/Dialer</div>
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #10B981">25</div>
+          <div class="preview-cell" style="border-right:none">45%</div>
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #F43F5E;background:#DCFCE7;color:#15803D;font-weight:500">185</div>
+        </div>
+        <div class="preview-row stripe">
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #6366F1;font-weight:500">Haresh</div>
+          <div class="preview-cell" style="border-right:none;background:#FFF7ED;color:#9A3412;font-weight:500">Rehan</div>
+          <div class="preview-cell" style="border-right:none;background:#EEF2FF;color:#3730A3;font-weight:500">OJT/Dialer</div>
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #10B981">38</div>
+          <div class="preview-cell" style="border-right:none">253%</div>
+          <div class="preview-cell" style="border-right:none;border-left:3px solid #F43F5E;background:#FEF9C3;color:#92400E;font-weight:500">120</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Color fills — only where they carry meaning</div>
+
+  <div class="step" data-step="7">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#DCFCE7;color:#166534">7</div>
+      <div class="step-title">KPI Score — 3-band color coding</div>
+      <div class="step-badge" style="background:#DCFCE7;color:#15803D">4 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#DCFCE7;color:#166534">1</div>
+        <div class="action-text">Select the KPI Score column (col <strong>AG</strong>, col 33) data only — click AG2, then <span class="kbd">Ctrl</span> <span class="kbd">Shift</span> <span class="kbd">↓</span> to select to last row</div>
+      </div>
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#DCFCE7;color:#166534">2</div>
+        <div class="action-text"><span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span> → New Rule → <strong>"Format only cells that contain"</strong><br>Cell value → <strong>greater than</strong> → <strong>115</strong><br>Click Format → Fill: <span class="kbd">DCFCE7</span> · Font: <span class="kbd">166534</span> Bold Size 13 → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#92400E">3</div>
+        <div class="action-text">New Rule → between <strong>80</strong> and <strong>115</strong><br>Fill: <span class="kbd">FEF9C3</span> · Font: <span class="kbd">92400E</span> Bold Size 13 → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#F43F5E">
+        <div class="action-num" style="background:#FFE4E6;color:#9F1239">4</div>
+        <div class="action-text">New Rule → <strong>less than</strong> <strong>80</strong><br>Fill: <span class="kbd">FFE4E6</span> · Font: <span class="kbd">9F1239</span> Bold Size 13 → OK</div>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#DCFCE7;color:#166534;font-size:13px;font-weight:500;padding:6px 14px"> 185 · score &gt;115</div>
+        <div class="swatch" style="background:#FEF9C3;color:#92400E;font-size:13px;font-weight:500;padding:6px 14px"> 100 · score 80–115</div>
+        <div class="swatch" style="background:#FFE4E6;color:#9F1239;font-size:13px;font-weight:500;padding:6px 14px"> 40 · score &lt;80</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-step="8">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#DCFCE7;color:#166534">8</div>
+      <div class="step-title">ELIGIBLE / NOT ELIGIBLE — all status columns</div>
+      <div class="step-badge" style="background:#DCFCE7;color:#15803D">3 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#DCFCE7;color:#166534">1</div>
+        <div class="action-text">Select columns <strong>AH through AM</strong> (click AH header, <span class="kbd">Shift</span>-click AM header)<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span> → New Rule → <strong>"Format only cells that contain"</strong><br>→ Specific Text → <strong>containing</strong> → type <strong>ELIGIBLE</strong><br>→ Format: Fill <span class="kbd">DCFCE7</span> · Font <span class="kbd">15803D</span> Bold → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#F43F5E">
+        <div class="action-num" style="background:#FFE4E6;color:#9F1239">2</div>
+        <div class="action-text">New Rule → Specific Text → containing → <strong>NOT ELIGIBLE</strong><br>→ Format: Fill <span class="kbd">FFE4E6</span> · Font <span class="kbd">BE123C</span> Bold → OK</div>
+      </div>
+      <div class="tip"><i class="ti ti-alert-circle" aria-hidden="true"></i> Make the NOT ELIGIBLE rule <strong>higher priority</strong> (move it up in the rules list with the ▲ button) so it overrides the ELIGIBLE rule when text says "NOT ELIGIBLE".</div>
+    </div>
+  </div>
+
+  <div class="step" data-step="9">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#FEF9C3;color:#854D0E">9</div>
+      <div class="step-title">Pool + Team Lead badges</div>
+      <div class="step-badge" style="background:#FEF9C3;color:#854D0E">4 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text">Select col C (Pool) data → <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span> → New Rule<br>→ Specific Text containing → <strong>OJT/Dialer</strong> → Fill <span class="kbd">EEF2FF</span> · Font <span class="kbd">3730A3</span> Bold → OK<br>→ New Rule → <strong>POOL 1</strong> → Fill <span class="kbd">F0FDF4</span> · Font <span class="kbd">166534</span> Bold → OK<br>→ New Rule → <strong>POOL 2</strong> → Fill <span class="kbd">FDF4FF</span> · Font <span class="kbd">7E22CE</span> Bold → OK</div>
+      </div>
+      <div class="action-row" style="border-left-color:#F97316">
+        <div class="action-num" style="background:#FFF7ED;color:#9A3412">2</div>
+        <div class="action-text">Select col B (Team Lead) data → <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span><br>→ Rehan → Fill <span class="kbd">FFF7ED</span> · Font <span class="kbd">9A3412</span> Bold<br>→ Radhika → Fill <span class="kbd">FDF4FF</span> · Font <span class="kbd">7E22CE</span> Bold<br>→ Saif → Fill <span class="kbd">EFF6FF</span> · Font <span class="kbd">1E40AF</span> Bold</div>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#EEF2FF;color:#3730A3">OJT/Dialer</div>
+        <div class="swatch" style="background:#F0FDF4;color:#166534">POOL 1</div>
+        <div class="swatch" style="background:#FDF4FF;color:#7E22CE">POOL 2</div>
+        <div class="swatch" style="background:#FFF7ED;color:#9A3412">Rehan</div>
+        <div class="swatch" style="background:#FDF4FF;color:#7E22CE">Radhika</div>
+        <div class="swatch" style="background:#EFF6FF;color:#1E40AF">Saif</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-step="10">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#FEF9C3;color:#92400E">10</div>
+      <div class="step-title">Leaves — 3-tier color (0, 1–2, above 2)</div>
+      <div class="step-badge" style="background:#FEF9C3;color:#92400E">3 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#92400E">1</div>
+        <div class="action-text">Select col <strong>AF</strong> (Leaves) data → <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span><br>Rule 1 → Cell value <strong>&gt; 2</strong> → Fill <span class="kbd">FFE4E6</span> · Font <span class="kbd">BE123C</span> Bold</div>
+      </div>
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#92400E">2</div>
+        <div class="action-text">Rule 2 → Cell value between <strong>1</strong> and <strong>2</strong> → Fill <span class="kbd">FEF9C3</span> · Font <span class="kbd">854D0E</span> Bold</div>
+      </div>
+      <div class="action-row" style="border-left-color:#FBBF24">
+        <div class="action-num" style="background:#FEF9C3;color:#92400E">3</div>
+        <div class="action-text">Rule 3 → Cell value <strong>= 0</strong> → Fill <span class="kbd">DCFCE7</span> · Font <span class="kbd">15803D</span> Bold</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Sheet 2 — attendance</div>
+
+  <div class="step" data-step="11">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#DBEAFE;color:#1E40AF">11</div>
+      <div class="step-title">Attendance code colors (Sheet 2)</div>
+      <div class="step-badge" style="background:#DBEAFE;color:#1E40AF">8 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#10B981">
+        <div class="action-num" style="background:#DCFCE7;color:#166534">1</div>
+        <div class="action-text">Go to <strong>Sheet 2</strong> → select the entire date range <strong>V2:AZ50</strong><br>(click V2, <span class="kbd">Ctrl</span> <span class="kbd">Shift</span> <span class="kbd">End</span> to select to AZ50)<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">L</span> <span class="kbd">N</span> → create one rule per code:</div>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#DCFCE7;color:#166534">PP · bg DCFCE7 · text 166534</div>
+        <div class="swatch" style="background:#DBEAFE;color:#1E40AF">WO / Week Off · DBEAFE · 1E40AF</div>
+        <div class="swatch" style="background:#FEF9C3;color:#92400E">HO (Holiday) · FEF9C3 · 92400E</div>
+        <div class="swatch" style="background:#E0F2FE;color:#0369A1">EL (Earned) · E0F2FE · 0369A1</div>
+        <div class="swatch" style="background:#FEF9C3;color:#854D0E">CL (Casual) · FEF9C3 · 854D0E</div>
+        <div class="swatch" style="background:#F5F3FF;color:#6D28D9">HD / Half-Day · F5F3FF · 6D28D9</div>
+        <div class="swatch" style="background:#EDE9FE;color:#5B21B6">Comp-off · EDE9FE · 5B21B6</div>
+        <div class="swatch" style="background:#FFE4E6;color:#9F1239">UL / UL P / LWP · FFE4E6 · 9F1239</div>
+        <div class="swatch" style="background:#FEE2E2;color:#991B1B">Absent / Leave · FEE2E2 · 991B1B</div>
+        <div class="swatch" style="background:#F1F5F9;color:#334155">Attrite · F1F5F9 · 334155</div>
+      </div>
+      <div class="tip"><i class="ti ti-info-circle" aria-hidden="true"></i> For all rules: use "Specific Text → containing" → type the exact code. Font: Bold, size 8, color from table above.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Final polish</div>
+
+  <div class="step" data-step="12">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num" style="background:#EEF2FF;color:#4338CA">12</div>
+      <div class="step-title">Freeze panes, filters, tab colors, alternating rows</div>
+      <div class="step-badge" style="background:#EEF2FF;color:#4338CA">3 min</div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">1</div>
+        <div class="action-text"><strong>Freeze panes (Sheet 1):</strong> click cell <strong>D2</strong> → <span class="kbd">Alt</span> <span class="kbd">W</span> <span class="kbd">F</span> <span class="kbd">F</span><br>First 3 cols + header stay locked while scrolling right</div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">2</div>
+        <div class="action-text"><strong>Auto-filter:</strong> click any cell in row 1 → <span class="kbd">Ctrl</span> <span class="kbd">Shift</span> <span class="kbd">L</span><br>Dropdown arrows appear on all headers</div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">3</div>
+        <div class="action-text"><strong>Alternating rows:</strong> select all even rows (hold <span class="kbd">Ctrl</span>, click row 3 header, row 5, row 7... or use Ctrl+T for auto table)<br>→ <span class="kbd">Alt</span> <span class="kbd">H</span> <span class="kbd">H</span> → More Colors → <span class="kbd">F7F8FC</span></div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">4</div>
+        <div class="action-text"><strong>Sheet tab colors:</strong> right-click each tab → Tab Color<br>KPI Scores → <span class="kbd">6366F1</span> · Attendance → <span class="kbd">10B981</span> · Tenure → <span class="kbd">F43F5E</span></div>
+      </div>
+      <div class="action-row" style="border-left-color:#6366F1">
+        <div class="action-num" style="background:#EEF2FF;color:#4338CA">5</div>
+        <div class="action-text"><strong>Save as template</strong> for next month: <span class="kbd">F12</span> → Save as type → <strong>Excel Template (.xltx)</strong><br>Next month paste fresh data → all formatting reapplies instantly</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)">
+    <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Quick reference — all hex codes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--color-text-secondary)">
+      <div>Header bg: <span class="kbd">0F172A</span></div>
+      <div>Row stripe: <span class="kbd">F7F8FC</span></div>
+      <div>Row divider: <span class="kbd">E2E8F0</span></div>
+      <div>Pass fill: <span class="kbd">DCFCE7</span> / <span class="kbd">15803D</span></div>
+      <div>Fail fill: <span class="kbd">FFE4E6</span> / <span class="kbd">BE123C</span></div>
+      <div>Warn fill: <span class="kbd">FEF9C3</span> / <span class="kbd">92400E</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const steps = document.querySelectorAll('.step');
+const prog = document.getElementById('progress');
+steps.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'progress-dot' + (i===0?' active':'');
+  prog.appendChild(d);
+});
+
+function toggle(hdr){
+  const step = hdr.closest('.step');
+  const wasOpen = step.classList.contains('open');
+  steps.forEach(s=>s.classList.remove('open'));
+  if(!wasOpen) step.classList.add('open');
+  updateProgress();
+}
+
+function updateProgress(){
+  const dots = prog.querySelectorAll('.progress-dot');
+  steps.forEach((s,i)=>{
+    dots[i].className = 'progress-dot' + (s.classList.contains('open')?' active':'');
+  });
+}
+</script>
