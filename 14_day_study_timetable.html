@@ -1,0 +1,454 @@
+
+<h2 class="sr-only">14-day study timetable for ML CRM notes, showing daily sessions, tasks, and progress tracking</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+
+.header-bar{padding:1rem 1.25rem 0.75rem;border-bottom:0.5px solid var(--color-border-tertiary);}
+.header-bar h1{font-size:16px;font-weight:500;color:var(--color-text-primary);}
+.header-bar p{font-size:12px;color:var(--color-text-secondary);margin-top:3px;}
+
+.progress-bar-wrap{padding:0.75rem 1.25rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:12px;}
+.progress-track{flex:1;height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:#1D9E75;border-radius:3px;transition:width 0.3s;}
+.progress-label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap;}
+
+.week-header{padding:0.6rem 1.25rem;background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;border-bottom:0.5px solid var(--color-border-tertiary);}
+
+.day-card{border-bottom:0.5px solid var(--color-border-tertiary);padding:0.9rem 1.25rem;}
+.day-card:last-child{border-bottom:none;}
+
+.day-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;}
+.day-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;}
+.day-num.upcoming{background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);}
+.day-num.today{background:#185FA5;color:#fff;}
+.day-num.done{background:#1D9E75;color:#fff;}
+
+.day-title{flex:1;}
+.day-title .label{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.day-title .sublabel{font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+
+.hours-badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);white-space:nowrap;}
+.phase-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.phase-read {background:#E6F1FB;color:#0C447C;}
+.phase-code {background:#EEEDFE;color:#3C3489;}
+.phase-both {background:#E1F5EE;color:#085041;}
+.phase-sql  {background:#FAEEDA;color:#633806;}
+.phase-rest {background:#F1EFE8;color:#444441;}
+
+.tasks{display:flex;flex-direction:column;gap:5px;}
+.task{display:flex;align-items:flex-start;gap:8px;padding:4px 0;}
+.task-cb{width:16px;height:16px;border:1.5px solid var(--color-border-secondary);border-radius:3px;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.task-cb.checked{background:#1D9E75;border-color:#1D9E75;}
+.task-cb.checked::after{content:'';display:block;width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);}
+.task-text{font-size:12px;color:var(--color-text-primary);line-height:1.5;}
+.task-text.done-text{color:var(--color-text-tertiary);text-decoration:line-through;}
+
+.session-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;margin-top:8px;}
+.session-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.session-row:last-child{border-bottom:none;}
+.session-time{color:var(--color-text-secondary);white-space:nowrap;min-width:110px;}
+.session-task{color:var(--color-text-primary);}
+
+.daily-rule{margin-top:10px;padding:8px 10px;border-left:2.5px solid #1F5C99;background:var(--color-background-secondary);border-radius:0;font-size:11px;color:var(--color-text-secondary);font-style:italic;}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;padding:0.75rem 1.25rem;border-top:0.5px solid var(--color-border-tertiary);}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);}
+</style>
+
+<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
+
+<div class="header-bar">
+  <h1>14-day study timetable — ML CRM notes</h1>
+  <p>4-6 hours/day · Theory parts 1-5 + Codebook parts 1-3 · Tick tasks as you complete them</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">0 / 0 tasks done</div>
+</div>
+
+<div id="days-container"></div>
+
+<div class="legend">
+  <div class="legend-item"><span class="phase-badge phase-read">Reading</span></div>
+  <div class="legend-item"><span class="phase-badge phase-code">Coding</span></div>
+  <div class="legend-item"><span class="phase-badge phase-both">Read + Code</span></div>
+  <div class="legend-item"><span class="phase-badge phase-sql">SQL</span></div>
+  <div class="legend-item"><span class="phase-badge phase-rest">Rest / Review</span></div>
+</div>
+
+</div>
+
+<script>
+const DAYS = [
+  {
+    day:1, label:"Day 1 — Foundations I", sublabel:"Part I Chapters 1–2 · Data types, statistics",
+    phase:"phase-read", hours:"4–5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part I Ch.1 aloud — all data types. Write each type + your CRM example from memory."},
+      {time:"Morning 10–12 PM",  task:"Read Part I Ch.2 aloud — mean, median, SD, IQR, skewness. Work every formula with a calculator."},
+      {time:"Afternoon 2–4 PM",  task:"Open Excel/Python. Compute mean, median, SD on your Visitor Score and Deposit Amount columns manually."},
+      {time:"Evening   7–8 PM",  task:"Write a one-page summary of Chapter 1-2 in your own words. No looking at notes."},
+    ],
+    tasks:[
+      "Recite: 6 data types and one CRM column example each",
+      "Recite: mean vs median difference — deposit example (8,099 vs 2,000)",
+      "Recite: IQR formula and the outlier fence formula",
+      "Recite: what positive skew means and when to log-transform",
+      "Written summary complete (own words, no notes)",
+    ],
+    rule:"If you cannot write the formula from memory, you have not learned it — look it up, close the notes, write it again."
+  },
+  {
+    day:2, label:"Day 2 — Foundations II", sublabel:"Part I Chapter 3 · Probability, Bayes, class imbalance",
+    phase:"phase-read", hours:"4–5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part I Ch.3 — probability, conditional probability, Bayes theorem."},
+      {time:"Morning 10–12 PM",  task:"Work through the Bayes theorem walkthrough with pen and paper. 6/95 base rate → referral update → 20.1%."},
+      {time:"Afternoon 2–4 PM",  task:"Read class imbalance section. Write SMOTE, class_weight, and threshold tuning from memory."},
+      {time:"Evening   7–8 PM",  task:"Inspect your actual Followup data in Excel. Confirm 6 conversions, 89 non-conversions."},
+    ],
+    tasks:[
+      "Recite: P(Event) formula and your base rate (6.3%)",
+      "Recite: Bayes theorem — all four components with their names",
+      "Recite: Why 93.7% accuracy is useless for your data",
+      "Recite: Three imbalance solutions and one sentence each",
+      "Confirmed actual class distribution in your Zoho data",
+    ],
+    rule:"Bayes theorem must be recited without the formula in front of you before you move to Day 3."
+  },
+  {
+    day:3, label:"Day 3 — Feature Engineering I", sublabel:"Part II Chapters 4–5 · Merging pipeline, date and web features",
+    phase:"phase-read", hours:"5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part II Ch.4 — target variable, data leakage definition, the full merging pipeline steps."},
+      {time:"Morning 10–12 PM",  task:"Read Part II Ch.5 sections on date features and web engagement. Draw the feature creation diagram on paper."},
+      {time:"Afternoon 2–4 PM",  task:"Read Ch.5 sections on call aggregation functions. Trace the call_trajectory and unanswered_streak logic by hand."},
+      {time:"Evening   7–8 PM",  task:"List every banned leakage column from memory. Check the list against your Followup column headers."},
+    ],
+    tasks:[
+      "Recite: what leakage is and name 3 banned columns in your data",
+      "Recite: the flag-before-fill ordering rule for Visitor Score",
+      "Recite: why log1p and not log",
+      "Recite: what call_trajectory returns (+1, -1, 0) and how",
+      "Recite: never_called flag must be created BEFORE filling hours_to_first_call",
+    ],
+    rule:"The flag-before-fill rule is the single most common engineering mistake. Say it aloud three times before Day 4."
+  },
+  {
+    day:4, label:"Day 4 — Feature Engineering II", sublabel:"Part II Chapter 6 · Encoding, scaling, feature selection",
+    phase:"phase-read", hours:"5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part II Ch.6 — four encoding strategies. Recite each with a CRM column example."},
+      {time:"Morning 10–12 PM",  task:"Read scaling section. Write which scaler for which column type from memory."},
+      {time:"Afternoon 2–4 PM",  task:"Read feature selection methods. Understand variance threshold vs correlation pruning vs RFE."},
+      {time:"Evening   7–8 PM",  task:"Write the complete FEATURES list from memory on paper. Check against the codebook. Fix gaps."},
+    ],
+    tasks:[
+      "Recite: four encoding strategies and when to use each",
+      "Recite: why drop_first=True in pd.get_dummies",
+      "Recite: LOO encoding and why standard target encoding leaks",
+      "Recite: fit-on-train-only scaling rule — what breaks if you violate it",
+      "Write full 27+ FEATURES list from memory (approximate is fine)",
+    ],
+    rule:"You must be able to explain to someone why LOO is different from standard target encoding before you code it."
+  },
+  {
+    day:5, label:"Day 5 — Models I", sublabel:"Part III Chapters 7–8 · Logistic regression, decision trees, random forest",
+    phase:"phase-read", hours:"5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part III Ch.7 — logistic regression. Work the z = sigmoid example with a calculator."},
+      {time:"Morning 10–12 PM",  task:"Read Ch.8 — decision trees. Compute Gini impurity for your 6/95 node by hand."},
+      {time:"Afternoon 2–4 PM",  task:"Read Random Forest section. Recite bootstrap sampling, OOB, and soft voting from memory."},
+      {time:"Evening   7–8 PM",  task:"Draw a depth-3 decision tree by hand that could classify a lead as Hot or Cold. Use your features."},
+    ],
+    tasks:[
+      "Recite: sigmoid formula and what z=0 gives you (P=0.50)",
+      "Recite: odds ratio = e^β and how to read it in plain English",
+      "Recite: Gini impurity formula and the value for your root node",
+      "Recite: why max_depth=4 not unlimited in decision trees",
+      "Recite: OOB score — why it is free validation",
+    ],
+    rule:"Compute Gini(6/95) with a calculator: 1 − (0.063² + 0.937²) = 0.118. Know this number."
+  },
+  {
+    day:6, label:"Day 6 — Models II + Evaluation", sublabel:"Part III Ch.9 + Part IV Ch.10–11 · LightGBM, confusion matrix, metrics",
+    phase:"phase-read", hours:"5–6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part III Ch.9 — LightGBM. Trace the 6-step boosting algorithm with your 6/95 data in your head."},
+      {time:"Morning 10–12 PM",  task:"Read Part IV Ch.10 — confusion matrix, Precision, Recall, F1, F2. Compute each for a TP=4,FP=6,FN=2,TN=83 example."},
+      {time:"Afternoon 2–4 PM",  task:"Read ROC-AUC and PR-AUC sections. Understand why PR-AUC is more honest for your imbalanced data."},
+      {time:"Afternoon 4–5 PM",  task:"Read Ch.11 — lift curve, threshold tuning, calibration."},
+      {time:"Evening   7–8 PM",  task:"Write the metric comparison table from memory: baseline values and your targets."},
+    ],
+    tasks:[
+      "Recite: scale_pos_weight = N_neg / N_pos = 89/6 = 14.83",
+      "Recite: num_leaves must be < 2^max_depth",
+      "Recite: Precision formula and what it means in plain English",
+      "Recite: Recall formula and why it is your priority metric",
+      "Recite: PR-AUC baseline = positive rate = 0.063",
+      "Compute F2 for TP=4,FP=6,FN=2 by hand",
+    ],
+    rule:"F2 not F1 for this project. Say it every morning this week until it is automatic."
+  },
+  {
+    day:7, label:"Day 7 — SHAP + Review", sublabel:"Part IV Ch.12 · SHAP + Week 1 consolidation",
+    phase:"phase-both", hours:"5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Part IV Ch.12 — SHAP values, TreeExplainer, four plots."},
+      {time:"Morning 10–12 PM",  task:"WEEK 1 RECITATION: go through Days 1-6 summary boxes. Say each aloud. Flag anything you cannot say."},
+      {time:"Afternoon 2–4 PM",  task:"ENVIRONMENT SETUP: install all libraries from Codebook Part 1 Section 1. Verify each import works."},
+      {time:"Evening   7–8 PM",  task:"Re-read flagged gaps from morning recitation. Sleep."},
+    ],
+    tasks:[
+      "Recite: SHAP expected_value is the baseline — average model prediction",
+      "Recite: shap_values[1] for positive class — not [0]",
+      "Recite: four SHAP plot types and what each answers",
+      "All libraries installed and verified: import lightgbm, shap, lifelines",
+      "Week 1 recitation gaps identified and re-read",
+    ],
+    rule:"Do not start coding until every library imports without error. Fix dependency issues today."
+  },
+  {
+    day:8, label:"Day 8 — Code: Data Loading", sublabel:"Codebook Part 1 Sections 1–3 · Setup, load, merge",
+    phase:"phase-code", hours:"5–6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Codebook Part 1 Sections 1-2 aloud. Then type all imports and load all 6 files. Print shapes."},
+      {time:"Morning 10–12 PM",  task:"Run inspect() on all 6 tables. Read every output. Note missing data rates and ID column formats."},
+      {time:"Afternoon 2–4 PM",  task:"Run the 5 critical column checks (Section 2.3). Fix any that fail before proceeding."},
+      {time:"Afternoon 4–6 PM",  task:"Read Section 3 aloud. Write safe_id_str(), verify ID match counts. Run call aggregation."},
+      {time:"Evening   7–8 PM",  task:"Complete the full merge. Assert row count == 95. Print final merged shape."},
+    ],
+    tasks:[
+      "All 6 files loaded, shapes printed correctly",
+      "inspect() run on all tables — missing rates read and understood",
+      "safe_id_str() written and lead source IDs matching",
+      "call_agg DataFrame created with all 9 aggregation columns",
+      "merged DataFrame created — assert len(merged) == len(followup) passes",
+      "Row count assertion: 0 NaN in call feature columns",
+    ],
+    rule:"Do not proceed to Day 9 until the merge assertion passes. A failing assertion means something is wrong with the join."
+  },
+  {
+    day:9, label:"Day 9 — Code: Features", sublabel:"Codebook Part 1 Sections 4–8 · Target, dates, encoding, final matrix",
+    phase:"phase-code", hours:"6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Sections 4-5 aloud. Create target variable. Print class distribution. Run all pre-leakage checks."},
+      {time:"Morning 10–12 PM",  task:"Parse all date columns. Compute all date features. Assert zero NaN in date features."},
+      {time:"Afternoon 2–4 PM",  task:"Read Section 6 aloud. Create flag columns BEFORE filling zeros. Create web features and deposit features."},
+      {time:"Afternoon 4–6 PM",  task:"Read Section 7 aloud. Apply ordinal encoding, one-hot encoding, and LOO target encoding."},
+      {time:"Evening   7–8 PM",  task:"Read Section 8 aloud. Assemble X and y. Run all pre-training assertions. Save to disk."},
+    ],
+    tasks:[
+      "target column created — print: {0:89, 1:6}",
+      "All date features created — zero NaN assertion passes",
+      "ever_visited_web flag created BEFORE visitor_score.fillna(0)",
+      "followup_status_rank created with correct STATUS_RANK dict",
+      "owner_conv_rate created with LeaveOneOutEncoder",
+      "X shape: (95, 34+) — zero NaN — all dtypes numeric",
+      "features_leads.csv and config.json saved to data/processed/",
+    ],
+    rule:"The pre-training assertions at the end of Section 8 must ALL pass. Each one protects against a real category of bug."
+  },
+  {
+    day:10, label:"Day 10 — Code: Models", sublabel:"Codebook Part 2 Sections 9–12 · Reload, CV, four models",
+    phase:"phase-code", hours:"6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Sections 9-11 aloud. Reload from disk. Define SKF. Define make_pipeline(). Verify stratified fold rates."},
+      {time:"Morning 10–12 PM",  task:"Train Logistic Regression. Print cross-validated AUC, F2, Recall. Print odds ratios table."},
+      {time:"Afternoon 12–2 PM", task:"Train Decision Tree. Print export_text() rules. Read them aloud — do they make business sense?"},
+      {time:"Afternoon 2–5 PM",  task:"Train Random Forest (slower). Print OOB score. Print feature importance top 15."},
+      {time:"Afternoon 5–7 PM",  task:"Train LightGBM. Print all metrics. Print model comparison table."},
+    ],
+    tasks:[
+      "SKF fold positive rates printed — all approximately 6%",
+      "LR cross-validated AUC and odds ratios printed",
+      "DT rules printed and read — top split makes business sense",
+      "RF OOB score and top 15 feature importances printed",
+      "LightGBM AUC >= LR AUC (if not, check for bugs)",
+      "Model comparison table printed for all 4 models",
+    ],
+    rule:"If LightGBM AUC is worse than Logistic Regression, do not panic — small data causes high variance. Check num_leaves < 2^max_depth."
+  },
+  {
+    day:11, label:"Day 11 — Code: Evaluation + SHAP", sublabel:"Codebook Part 2 Sections 13–15 · Full evaluation suite, explanations",
+    phase:"phase-code", hours:"6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Sections 13-14 aloud. Get OOF predictions. Run threshold search. Print confusion matrix at best threshold."},
+      {time:"Morning 10–12 PM",  task:"Plot ROC and Precision-Recall curves. Save both charts. Read PR-AUC value — is it >> 0.063 baseline?"},
+      {time:"Afternoon 12–2 PM", task:"Run compute_lift_table(). Print the lift table. Read the top decile lift value aloud."},
+      {time:"Afternoon 2–5 PM",  task:"Read Section 14 aloud. Create SHAP explainer. Generate all four SHAP plots. Save to outputs/shap/"},
+      {time:"Afternoon 5–7 PM",  task:"Run explain_lead() on top 5 leads. Read explanations aloud. Do they match your domain knowledge?"},
+    ],
+    tasks:[
+      "BEST_THRESHOLD printed — should be between 0.10 and 0.30",
+      "Confusion matrix printed — identify TP, FP, FN, TN counts",
+      "ROC and PR curves saved to outputs/",
+      "Lift table printed — top decile lift > 1.5",
+      "All 4 SHAP plots saved to outputs/shap/",
+      "Top 5 lead explanations printed and read",
+      "Lead scoring pipeline saved to models/",
+    ],
+    rule:"The SHAP waterfall for your top lead must make business sense. If the top feature is a random-looking column, check for leakage."
+  },
+  {
+    day:12, label:"Day 12 — Code: Churn Model", sublabel:"Codebook Part 3 Sections 17–19 · Ledger features, RFM, churn pipeline",
+    phase:"phase-code", hours:"6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Section 17 aloud. Print LedgerType.value_counts(). Split ledger. Run all four aggregation blocks."},
+      {time:"Morning 10–12 PM",  task:"Merge all aggregations. Compute withdrawal_ratio, trades_per_day. Assert zero NaN."},
+      {time:"Afternoon 12–2 PM", task:"Read Section 18 aloud. Build RFM scores. Print segment distribution and churn rate per segment."},
+      {time:"Afternoon 2–5 PM",  task:"Read Section 19 aloud. Train churn model. Print metrics. Print churn tier distribution."},
+      {time:"Afternoon 5–6 PM",  task:"Save churn pipeline. Verify reload."},
+    ],
+    tasks:[
+      "LedgerType.value_counts() printed — confirmed exact strings",
+      "All four agg DataFrames created and verified",
+      "client_feats merged — zero NaN — churn rate printed",
+      "RFM scores computed — segment distribution printed",
+      "Churn model cross-validated AUC printed",
+      "Churn tier distribution printed",
+      "lgbm_churn_YYYYMMDD.pkl saved and reload verified",
+    ],
+    rule:"Note: with only 16 clients in your current export, churn model results will be unreliable. Run the code to learn the structure — the numbers will improve with the full data export."
+  },
+  {
+    day:13, label:"Day 13 — Code: Survival + A/B + Automation", sublabel:"Codebook Part 3 Sections 20–22 · Full pipeline completion",
+    phase:"phase-code", hours:"6 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Section 20 aloud. Build survival data (duration, event_observed). Fit KaplanMeierFitter. Plot and save curve."},
+      {time:"Morning 10–12 PM",  task:"Run stratified KM by lead source. Fit CoxPHFitter. Print hazard ratios sorted by value."},
+      {time:"Afternoon 12–2 PM", task:"Read Section 21 aloud. Run required_sample_size() for your baseline rate. Print all four scenarios."},
+      {time:"Afternoon 2–5 PM",  task:"Read Section 22 aloud. Create feature_engineering.py by extracting Part 1 code into functions. Test the import."},
+      {time:"Afternoon 5–7 PM",  task:"Write and run daily_score.py with --date today. Verify call_list_YYYY-MM-DD.xlsx is created."},
+    ],
+    tasks:[
+      "Kaplan-Meier curve saved — median survival time printed",
+      "Cox model hazard ratios printed with p-values",
+      "Sample size scenarios printed for 4 expected effect sizes",
+      "feature_engineering.py importable with build_lead_features()",
+      "daily_score.py runs end-to-end without errors",
+      "call_list Excel file created in outputs/",
+      "monitoring/weekly_metrics.jsonl has an entry",
+    ],
+    rule:"The daily_score.py must run without touching any code after the first successful run. Test this by running it a second time."
+  },
+  {
+    day:14, label:"Day 14 — Review + Monitoring + SQL Start", sublabel:"Section 23 · Full recitation · First SQL session",
+    phase:"phase-both", hours:"5 hrs",
+    sessions:[
+      {time:"Morning  8–10 AM",  task:"Read Section 23 aloud. Implement compute_psi(). Run monitoring log reader. Add PSI check to daily script."},
+      {time:"Morning 10–12 PM",  task:"FULL RECITATION: go through every section summary box in all three codebook parts. Say each rule aloud."},
+      {time:"Afternoon 2–3 PM",  task:"Read the Master Quick Reference page. Write every number from the 'Numbers to Remember' table from memory."},
+      {time:"Afternoon 3–5 PM",  task:"START SQL: complete Mode Analytics SQL Tutorial Part 1 (SELECT, WHERE, ORDER BY, LIMIT). Do all exercises."},
+      {time:"Evening   7–8 PM",  task:"Write what you will do with the model outputs when the full data arrives. One paragraph. No notes."},
+    ],
+    tasks:[
+      "compute_psi() written and tested",
+      "PSI interpretation thresholds recited: 0.10 / 0.25",
+      "Five retraining trigger rules recited from memory",
+      "All 'Numbers to Remember' written from memory",
+      "Column name gotcha table recited — Deposite vs Deposit",
+      "SQL Part 1 exercises completed",
+      "Full project runs end-to-end from Day 8 cold start",
+    ],
+    rule:"Day 14 is not the end — it is the beginning of execution. Tomorrow you request the full data exports and start SQL daily practice."
+  },
+];
+
+function renderDays(){
+  const container = document.getElementById('days-container');
+  let weekHtml = '';
+
+  DAYS.forEach((d, di) => {
+    if(di === 0) weekHtml += `<div class="week-header">Week 1 — Theory deep-read (Days 1–7)</div>`;
+    if(di === 7) weekHtml += `<div class="week-header">Week 2 — Active coding (Days 8–14)</div>`;
+
+    const savedChecks = JSON.parse(localStorage.getItem(`day${d.day}`) || '[]');
+
+    const tasksHtml = d.tasks.map((t, ti) => {
+      const checked = savedChecks.includes(ti);
+      return `<div class="task">
+        <div class="task-cb ${checked ? 'checked':''}" onclick="toggleTask(${d.day},${ti})" role="checkbox" aria-checked="${checked}" aria-label="${t}"></div>
+        <span class="task-text ${checked ? 'done-text':''}" id="task-text-${d.day}-${ti}">${t}</span>
+      </div>`;
+    }).join('');
+
+    const sessionsHtml = d.sessions.map(s =>
+      `<div class="session-row">
+        <span class="session-time">${s.time}</span>
+        <span class="session-task">${s.task}</span>
+      </div>`
+    ).join('');
+
+    weekHtml += `
+      <div class="day-card" id="day-card-${d.day}">
+        <div class="day-header">
+          <div class="day-num upcoming" id="daynum-${d.day}">${d.day}</div>
+          <div class="day-title">
+            <div class="label">${d.label}</div>
+            <div class="sublabel">${d.sublabel}</div>
+          </div>
+          <span class="phase-badge ${d.phase}" style="margin-right:6px">${d.phase==='phase-read'?'Reading':d.phase==='phase-code'?'Coding':d.phase==='phase-both'?'Read + Code':d.phase==='phase-sql'?'SQL':'Rest'}</span>
+          <span class="hours-badge">${d.hours}</span>
+        </div>
+        <div class="session-block">${sessionsHtml}</div>
+        <div style="margin-top:10px;" class="tasks">${tasksHtml}</div>
+        <div class="daily-rule">${d.rule}</div>
+      </div>`;
+  });
+
+  container.innerHTML = weekHtml;
+  updateProgress();
+}
+
+function toggleTask(day, taskIdx){
+  let saved = JSON.parse(localStorage.getItem(`day${day}`) || '[]');
+  if(saved.includes(taskIdx)){
+    saved = saved.filter(i => i !== taskIdx);
+  } else {
+    saved.push(taskIdx);
+  }
+  localStorage.setItem(`day${day}`, JSON.stringify(saved));
+
+  const cb = document.querySelector(`#day-card-${day} .task:nth-child(${taskIdx+1}) .task-cb`);
+  const txt = document.getElementById(`task-text-${day}-${taskIdx}`);
+  if(cb){ cb.classList.toggle('checked', saved.includes(taskIdx)); cb.setAttribute('aria-checked', saved.includes(taskIdx)); }
+  if(txt){ txt.classList.toggle('done-text', saved.includes(taskIdx)); }
+
+  updateProgress();
+  updateDayNum(day);
+}
+
+function updateDayNum(day){
+  const d = DAYS.find(x => x.day === day);
+  if(!d) return;
+  const saved = JSON.parse(localStorage.getItem(`day${day}`) || '[]');
+  const el = document.getElementById(`daynum-${day}`);
+  if(!el) return;
+  if(saved.length === d.tasks.length){
+    el.className = 'day-num done';
+  } else if(saved.length > 0){
+    el.className = 'day-num today';
+  } else {
+    el.className = 'day-num upcoming';
+  }
+}
+
+function updateProgress(){
+  let total = 0, done = 0;
+  DAYS.forEach(d => {
+    total += d.tasks.length;
+    const saved = JSON.parse(localStorage.getItem(`day${d.day}`) || '[]');
+    done += saved.length;
+  });
+  const pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${done} / ${total} tasks done  (${pct}%)`;
+  DAYS.forEach(d => updateDayNum(d.day));
+}
+
+renderDays();
+</script>

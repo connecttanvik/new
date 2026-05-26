@@ -1,0 +1,562 @@
+
+<h2 class="sr-only">Chapter 1 Visual Guide: Understanding Your CRM Data — data types, distributions, missing data, correlation, and dataset relationships</h2>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.section { margin-bottom: 2.5rem; }
+.section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; padding-bottom: 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.section-sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 14px; }
+
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+
+.tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+.tag-blue   { background: #E6F1FB; color: #0C447C; }
+.tag-teal   { background: #E1F5EE; color: #085041; }
+.tag-amber  { background: #FAEEDA; color: #633806; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+.tag-coral  { background: #FAECE7; color: #712B13; }
+.tag-gray   { background: #F1EFE8; color: #444441; }
+
+@media (prefers-color-scheme: dark) {
+  .tag-blue   { background: #0C447C; color: #B5D4F4; }
+  .tag-teal   { background: #085041; color: #9FE1CB; }
+  .tag-amber  { background: #633806; color: #FAC775; }
+  .tag-purple { background: #3C3489; color: #CECBF6; }
+  .tag-coral  { background: #712B13; color: #F5C4B3; }
+  .tag-gray   { background: #444441; color: #D3D1C7; }
+}
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+
+.dt-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.dt-row:last-child { border-bottom: none; padding-bottom: 0; }
+.dt-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.dt-body { flex: 1; }
+.dt-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.dt-desc { font-size: 11px; color: var(--color-text-secondary); margin-top: 1px; }
+.dt-ex   { font-size: 11px; color: var(--color-text-tertiary); margin-top: 3px; font-style: italic; }
+
+.bar-wrap { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.bar-label { font-size: 11px; color: var(--color-text-secondary); width: 100px; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 10px; background: var(--color-background-secondary); border-radius: 5px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+.bar-val  { font-size: 11px; color: var(--color-text-secondary); width: 36px; flex-shrink: 0; }
+
+.miss-cell { width: 14px; height: 14px; border-radius: 2px; display: inline-block; margin: 1px; }
+.miss-filled { background: #378ADD; }
+.miss-empty  { background: var(--color-border-tertiary); opacity: 0.5; }
+@media (prefers-color-scheme: dark) { .miss-filled { background: #85B7EB; } }
+
+.corr-dot { cursor: pointer; transition: r 0.2s; }
+.corr-dot:hover { r: 7; }
+
+.stat-mini { text-align: center; padding: 10px 8px; }
+.stat-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.stat-lbl { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.pipe-box { border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 8px 12px; background: var(--color-background-secondary); font-size: 12px; text-align: center; }
+.pipe-title { font-weight: 500; font-size: 12px; color: var(--color-text-primary); }
+.pipe-rows  { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.pipe-arrow { font-size: 16px; color: var(--color-text-tertiary); display: flex; align-items: center; justify-content: center; }
+
+.legend-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; }
+.legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+.tab-btn { padding: 5px 12px; font-size: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 6px; background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+.tab-btn.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; }
+.tab-btn:hover:not(.active) { background: var(--color-background-secondary); }
+</style>
+
+<div style="padding: 0.5rem 0 1.5rem;">
+
+  <!-- ── SECTION 1: DATA TYPES ─────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">1 · Types of data in your CRM</div>
+    <div class="section-sub">Every column in your six Zoho tables falls into one of these types. The type determines how you process and encode it for ML.</div>
+    <div class="card">
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#E6F1FB;">📊</div>
+        <div class="dt-body">
+          <div class="dt-name">Continuous numerical <span class="tag tag-blue">no scaling yet</span></div>
+          <div class="dt-desc">Real numbers — any value in a range including decimals. Arithmetic (mean, SD) is meaningful.</div>
+          <div class="dt-ex">Visitor Score (348.5), Average Time Spent (61.8 min), Deposit Amount (2,000)</div>
+        </div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#E1F5EE;">🔢</div>
+        <div class="dt-body">
+          <div class="dt-name">Discrete / count numerical <span class="tag tag-teal">whole numbers</span></div>
+          <div class="dt-desc">Only whole numbers — counts of events. Cannot be 2.7 calls or 3.4 chats.</div>
+          <div class="dt-ex">Number of Chats, Days Visited, No. of Follow-ups, Total Calls Made</div>
+        </div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#FAEEDA;">🏷️</div>
+        <div class="dt-body">
+          <div class="dt-name">Nominal categorical <span class="tag tag-amber">one-hot encode</span></div>
+          <div class="dt-desc">Labels with no natural order. Cannot say Referral > Website mathematically.</div>
+          <div class="dt-ex">Language, Lead Source, Industry, Country</div>
+        </div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#EEEDFE;">📶</div>
+        <div class="dt-body">
+          <div class="dt-name">Ordinal categorical <span class="tag tag-purple">ordinal encode 0,1,2…</span></div>
+          <div class="dt-desc">Labels with a meaningful ranking. The model should know Interested > Prospect > New Lead.</div>
+          <div class="dt-ex">Followup Status (New Lead → Prospect → Interested → Convert)</div>
+        </div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#EAFAF1;">✅</div>
+        <div class="dt-body">
+          <div class="dt-name">Binary <span class="tag tag-teal">encode as 0 / 1</span></div>
+          <div class="dt-desc">Exactly two possible values. Simplest encoding — directly usable.</div>
+          <div class="dt-ex">Is Converted, Lapsed Client, Email Opt Out, Feedback 1 Done</div>
+        </div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-icon" style="background:#F1EFE8;">📅</div>
+        <div class="dt-body">
+          <div class="dt-name">Date / time <span class="tag tag-gray">engineer numeric features</span></div>
+          <div class="dt-desc">Raw timestamps are useless — extract gaps, hours, day-of-week as numbers.</div>
+          <div class="dt-ex">Created Time → days_since_created, hours_to_first_call, created_on_weekend</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: ORDINAL STATUS ───────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">2 · Ordinal encoding — Followup Status pipeline</div>
+    <div class="section-sub">The most important ordinal column in your data. The model learns that higher rank = further along = more likely to convert.</div>
+    <div class="card">
+      <div style="overflow-x: auto; padding-bottom: 4px;">
+        <div style="display: flex; align-items: center; gap: 0; min-width: 600px; margin: 8px 0 16px;">
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #F4F8FD; border: 0.5px solid var(--color-border-tertiary); border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: var(--color-text-secondary);">New Lead</div>
+            <div style="font-size: 18px; font-weight: 500; color: var(--color-text-tertiary); margin-top: 4px;">0</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #EBF3FB; border: 0.5px solid #B5D4F4; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #185FA5;">Ringing / Busy</div>
+            <div style="font-size: 18px; font-weight: 500; color: #185FA5; margin-top: 4px;">1</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #E1F5EE; border: 0.5px solid #5DCAA5; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #0F6E56;">Call Later</div>
+            <div style="font-size: 18px; font-weight: 500; color: #0F6E56; margin-top: 4px;">2</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #3C3489;">Prospect</div>
+            <div style="font-size: 18px; font-weight: 500; color: #3C3489; margin-top: 4px;">3</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #FAEEDA; border: 0.5px solid #FAC775; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #633806;">Interested</div>
+            <div style="font-size: 18px; font-weight: 500; color: #633806; margin-top: 4px;">4</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #FAECE7; border: 0.5px solid #F0997B; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #712B13;">Deposited</div>
+            <div style="font-size: 18px; font-weight: 500; color: #712B13; margin-top: 4px;">5</div>
+          </div>
+          <div style="font-size: 14px; color: var(--color-text-tertiary); padding: 0 2px; margin-bottom: 18px;">→</div>
+          <div style="text-align: center; flex: 1;">
+            <div style="background: #EAFAF1; border: 0.5px solid #5DCAA5; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 500; color: #0F6E56;">Convert</div>
+            <div style="font-size: 18px; font-weight: 500; color: #0F6E56; margin-top: 4px;">6</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 16px; font-size: 11px; color: var(--color-text-secondary);">
+        <div><span style="font-weight: 500; color: var(--color-text-primary);">Lost Lead / Invalid Number</span> → encode as −1 or −2</div>
+        <div><span style="font-weight: 500; color: var(--color-text-primary);">Not Interested</span> → encode as −1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: MISSING DATA ──────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">3 · Missing data — what to do with each type</div>
+    <div class="section-sub">Each column's missing data has a different reason — and requires a different treatment. Never blindly fill all blanks with the mean.</div>
+    <div class="grid2">
+      <div class="card">
+        <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px;">Missing data rates — Followup table</div>
+        <div id="miss-bars"></div>
+        <div style="margin-top: 10px; font-size: 11px; color: var(--color-text-tertiary);">Each bar = % of rows where this column is blank</div>
+      </div>
+      <div class="card">
+        <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px;">Three types of missingness</div>
+        <div style="border-left: 3px solid #378ADD; padding: 8px 10px; margin-bottom: 8px; background: var(--color-background-secondary); border-radius: 0 6px 6px 0;">
+          <div style="font-size: 12px; font-weight: 500; color: var(--color-text-primary);">MCAR — Missing Completely At Random</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 3px;">Salesperson forgot to fill it in. No pattern.<br><strong>Fix:</strong> Fill with median (numbers) or mode (categories).</div>
+        </div>
+        <div style="border-left: 3px solid #1D9E75; padding: 8px 10px; margin-bottom: 8px; background: var(--color-background-secondary); border-radius: 0 6px 6px 0;">
+          <div style="font-size: 12px; font-weight: 500; color: var(--color-text-primary);">MNAR — Missing Not At Random</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 3px;">Visitor Score blank = lead never visited the site. True value is 0.<br><strong>Fix:</strong> Fill with 0 — the correct sentinel value.</div>
+        </div>
+        <div style="border-left: 3px solid #EF9F27; padding: 8px 10px; background: var(--color-background-secondary); border-radius: 0 6px 6px 0;">
+          <div style="font-size: 12px; font-weight: 500; color: var(--color-text-primary);">Informative Missingness</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 3px;">Whether blank or filled <em>is itself</em> the signal. Deposit Amount blank = never deposited.<br><strong>Fix:</strong> Create <code>has_deposit = 0/1</code> flag BEFORE filling with 0.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual grid showing filled vs empty -->
+    <div class="card" style="margin-top: 12px;">
+      <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px;">What 65% missing looks like — Visitor Score (20 sample rows)</div>
+      <div style="display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px;">Raw column</div>
+          <div id="miss-grid-raw" style="display: flex; flex-wrap: wrap; width: 160px;"></div>
+        </div>
+        <div style="display: flex; align-items: center; font-size: 20px; color: var(--color-text-tertiary); padding-top: 24px;">→</div>
+        <div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px;">Step 1: create <code style="font-size: 10px; background: var(--color-background-secondary); padding: 1px 4px; border-radius: 3px;">ever_visited_web</code></div>
+          <div id="miss-grid-flag" style="display: flex; flex-wrap: wrap; width: 160px;"></div>
+        </div>
+        <div style="display: flex; align-items: center; font-size: 20px; color: var(--color-text-tertiary); padding-top: 24px;">→</div>
+        <div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px;">Step 2: fill blanks with 0</div>
+          <div id="miss-grid-filled" style="display: flex; flex-wrap: wrap; width: 160px;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; justify-content: flex-end; padding-bottom: 4px;">
+          <div class="legend-row"><div class="legend-sq" style="background:#378ADD;"></div> Has value</div>
+          <div class="legend-row"><div class="legend-sq" style="background:var(--color-border-tertiary);opacity:0.5;"></div> Blank (NaN)</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#1D9E75;"></div> Flag = 1</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#F1EFE8; border: 0.5px solid var(--color-border-tertiary);"></div> Filled with 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: DISTRIBUTIONS ────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">4 · Distribution shapes — and why they matter for ML</div>
+    <div class="section-sub">The shape of a column's distribution determines whether you need to log-transform it before training. Click each tab to see the effect on your CRM data.</div>
+    <div class="card">
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+        <button class="tab-btn active" onclick="showDist('deposits')">Deposit amounts</button>
+        <button class="tab-btn" onclick="showDist('visitor')">Visitor Score</button>
+        <button class="tab-btn" onclick="showDist('calls')">Call count</button>
+        <button class="tab-btn" onclick="showDist('normal')">Normal (for contrast)</button>
+      </div>
+      <div style="position: relative; height: 180px;">
+        <canvas id="distChart" role="img" aria-label="Distribution histogram of selected CRM column, showing skewness">Histogram showing the distribution shape of the selected column.</canvas>
+      </div>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px;">
+        <div class="stat-mini" style="flex:1; min-width: 80px; background: var(--color-background-secondary); border-radius: 8px;">
+          <div class="stat-val" id="d-mean">—</div><div class="stat-lbl">Mean</div>
+        </div>
+        <div class="stat-mini" style="flex:1; min-width: 80px; background: var(--color-background-secondary); border-radius: 8px;">
+          <div class="stat-val" id="d-median">—</div><div class="stat-lbl">Median</div>
+        </div>
+        <div class="stat-mini" style="flex:1; min-width: 80px; background: var(--color-background-secondary); border-radius: 8px;">
+          <div class="stat-val" id="d-skew">—</div><div class="stat-lbl">Skewness</div>
+        </div>
+        <div class="stat-mini" style="flex:1; min-width: 80px; background: var(--color-background-secondary); border-radius: 8px;">
+          <div class="stat-val" id="d-action">—</div><div class="stat-lbl">ML action</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: CORRELATION ───────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">5 · Correlation — which features relate to conversion?</div>
+    <div class="section-sub">Correlation ranges from −1 (perfect negative) to +1 (perfect positive). Features with higher absolute correlation tend to be more predictive. Hover a dot to see details.</div>
+    <div class="card">
+      <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 260px;">
+          <div style="position: relative; height: 260px;">
+            <canvas id="corrChart" role="img" aria-label="Horizontal bar chart of feature correlations with Is Converted target variable">Bar chart showing correlation of CRM features with the conversion target.</canvas>
+          </div>
+        </div>
+        <div style="width: 200px; padding-top: 8px;">
+          <div id="corr-detail" class="card" style="background: var(--color-background-secondary); border: none;">
+            <div style="font-size: 12px; color: var(--color-text-secondary);">Click a bar to see what the correlation means for your sales process.</div>
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="legend-row"><div class="legend-sq" style="background:#3266AD;"></div> Positive (helps conversion)</div>
+            <div class="legend-row" style="margin-top: 4px;"><div class="legend-sq" style="background:#A32D2D;"></div> Negative (hurts conversion)</div>
+          </div>
+          <div style="margin-top: 12px; padding: 8px; background: var(--color-background-secondary); border-radius: 6px; font-size: 11px; color: var(--color-text-secondary);">
+            ⚠️ Correlation ≠ causation. These are signals to investigate, not guaranteed causes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: DATASET RELATIONSHIPS ─────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">6 · Your six datasets and how they connect</div>
+    <div class="section-sub">Every join relationship you need to merge your tables into one flat feature matrix for ML training.</div>
+    <div style="overflow-x: auto;">
+      <svg width="100%" viewBox="0 0 680 340" role="img">
+        <title>Database join diagram for the six Zoho CRM tables</title>
+        <desc>Shows how Followup, Client, Calls, Ledger, Lead Sources and Users tables connect via shared ID columns</desc>
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Followup (centre-left) -->
+        <g class="node c-blue" onclick="sendPrompt('Tell me more about the Followup table features')">
+          <rect x="20" y="120" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="90" y="144" text-anchor="middle" dominant-baseline="central">Followup</text>
+          <text class="ts" x="90" y="163" text-anchor="middle" dominant-baseline="central">95 rows · 123 cols</text>
+        </g>
+
+        <!-- Client (centre) -->
+        <g class="node c-teal" onclick="sendPrompt('Tell me more about the Client table features')">
+          <rect x="270" y="120" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="340" y="144" text-anchor="middle" dominant-baseline="central">Client</text>
+          <text class="ts" x="340" y="163" text-anchor="middle" dominant-baseline="central">16 rows · 126 cols</text>
+        </g>
+
+        <!-- Calls (top) -->
+        <g class="node c-purple" onclick="sendPrompt('Tell me more about using the Calls table')">
+          <rect x="20" y="20" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="90" y="44" text-anchor="middle" dominant-baseline="central">Calls</text>
+          <text class="ts" x="90" y="63" text-anchor="middle" dominant-baseline="central">6,008 rows · 43 cols</text>
+        </g>
+
+        <!-- Ledger (top-right) -->
+        <g class="node c-amber" onclick="sendPrompt('Tell me more about the Ledger data and churn features')">
+          <rect x="520" y="20" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="590" y="44" text-anchor="middle" dominant-baseline="central">Ledger</text>
+          <text class="ts" x="590" y="63" text-anchor="middle" dominant-baseline="central">14,030 rows · 12 cols</text>
+        </g>
+
+        <!-- Lead Sources (bottom-left) -->
+        <g class="node c-coral" onclick="sendPrompt('How do I decode Lead Source IDs?')">
+          <rect x="20" y="250" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="90" y="274" text-anchor="middle" dominant-baseline="central">Lead Sources</text>
+          <text class="ts" x="90" y="293" text-anchor="middle" dominant-baseline="central">Reference lookup</text>
+        </g>
+
+        <!-- Users (bottom-right) -->
+        <g class="node c-gray" onclick="sendPrompt('How do I use the Users table for owner encoding?')">
+          <rect x="520" y="250" width="140" height="64" rx="8" stroke-width="0.5"/>
+          <text class="th" x="590" y="274" text-anchor="middle" dominant-baseline="central">Users</text>
+          <text class="ts" x="590" y="293" text-anchor="middle" dominant-baseline="central">Salesperson reference</text>
+        </g>
+
+        <!-- Calls → Followup (LEADID) -->
+        <path d="M90 84 L90 120" stroke="#7F77DD" stroke-width="1.2" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 3"/>
+        <text class="ts" x="96" y="106" dominant-baseline="central" fill="#7F77DD">LEADID</text>
+
+        <!-- Followup → Client (Converted Contact → Id) -->
+        <path d="M160 152 L270 152" stroke="#1D9E75" stroke-width="1.2" fill="none" marker-end="url(#arr2)"/>
+        <text class="ts" x="190" y="145" dominant-baseline="central">Converted Contact → Id</text>
+
+        <!-- Lead Sources → Followup (Lead Source_2) -->
+        <path d="M90 250 L90 184" stroke="#D85A30" stroke-width="1.2" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 3"/>
+        <text class="ts" x="96" y="228" dominant-baseline="central" fill="#D85A30">Lead Source_2</text>
+
+        <!-- Lead Sources → Client (Source 2) -->
+        <path d="M160 282 Q260 282 270 200" stroke="#D85A30" stroke-width="1.2" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 3"/>
+        <text class="ts" x="200" y="298" dominant-baseline="central" fill="#D85A30">Source 2</text>
+
+        <!-- Users → Followup (Followup Owner) -->
+        <path d="M520 282 Q430 310 160 180" stroke="#888780" stroke-width="1.2" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 3"/>
+        <text class="ts" x="360" y="320" dominant-baseline="central" fill="#888780">Followup Owner</text>
+
+        <!-- Users → Client (Client Owner) -->
+        <path d="M520 268 L410 200" stroke="#888780" stroke-width="1.2" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 3"/>
+        <text class="ts" x="448" y="246" dominant-baseline="central" fill="#888780">Client Owner</text>
+
+        <!-- Ledger → Client (ClientID) -->
+        <path d="M520 52 Q460 52 460 152 L410 152" stroke="#BA7517" stroke-width="1.2" fill="none" marker-end="url(#arr2)"/>
+        <text class="ts" x="462" y="106" dominant-baseline="central" fill="#BA7517">ClientID → Account Id</text>
+
+      </svg>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-top: 10px;">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-text-secondary);">
+        <div style="width: 24px; height: 1.5px; background: var(--color-text-secondary);"></div> Direct join
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-text-secondary);">
+        <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="var(--color-text-secondary)" stroke-width="1.5" stroke-dasharray="4 3"/></svg> Reference / lookup join
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const txtClr = isDark ? '#c2c0b6' : '#5F5E5A';
+const gridClr = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+
+// ── Missing data bars ─────────────────────────────────────────────────
+const missData = [
+  { col: 'Final Outcome',         pct: 100, type: 'drop' },
+  { col: 'Deposite Amount',       pct: 94,  type: 'flag' },
+  { col: 'Visitor Score',         pct: 65,  type: 'zero' },
+  { col: 'Avg Time Spent',        pct: 58,  type: 'zero' },
+  { col: 'Days Visited',          pct: 42,  type: 'zero' },
+  { col: 'Call Duration',         pct: 31,  type: 'zero' },
+  { col: 'Last Call Result',      pct: 22,  type: 'median' },
+  { col: 'Lead Source',           pct: 12,  type: 'mode' },
+];
+const typeColor = { drop:'#E24B4A', flag:'#EF9F27', zero:'#378ADD', median:'#1D9E75', mode:'#7F77DD' };
+const typeLabel = { drop:'Drop column', flag:'Create 0/1 flag', zero:'Fill with 0', median:'Fill with median', mode:'Fill with mode' };
+
+const barsEl = document.getElementById('miss-bars');
+missData.forEach(d => {
+  barsEl.innerHTML += `
+    <div class="bar-wrap">
+      <div class="bar-label">${d.col}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${d.pct}%;background:${typeColor[d.type]};"></div>
+      </div>
+      <div class="bar-val" style="color:${typeColor[d.type]};font-size:10px;">${d.pct}%</div>
+    </div>
+  `;
+});
+// Legend
+const legEl = document.createElement('div');
+legEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;';
+Object.entries(typeLabel).forEach(([k,v]) => {
+  legEl.innerHTML += `<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:8px;height:8px;border-radius:2px;background:${typeColor[k]};display:inline-block;"></span>${v}</span>`;
+});
+barsEl.appendChild(legEl);
+
+// ── Missing data grid ─────────────────────────────────────────────────
+const presence = [1,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1]; // 1=has value
+const rawEl  = document.getElementById('miss-grid-raw');
+const flagEl = document.getElementById('miss-grid-flag');
+const fillEl = document.getElementById('miss-grid-filled');
+presence.forEach(p => {
+  rawEl.innerHTML  += `<div class="miss-cell ${p ? 'miss-filled' : 'miss-empty'}" title="${p ? 'Has value' : 'NaN'}"></div>`;
+  flagEl.innerHTML += `<div class="miss-cell" style="background:${p ? '#1D9E75' : '#F1EFE8'};${p ? '' : 'border:0.5px solid var(--color-border-tertiary);'}" title="${p ? 'flag=1' : 'flag=0'}"></div>`;
+  fillEl.innerHTML += `<div class="miss-cell" style="background:${p ? '#378ADD' : '#F1EFE8'};${p ? '' : 'border:0.5px solid var(--color-border-tertiary);'}" title="${p ? 'Original value' : 'Filled with 0'}"></div>`;
+});
+
+// ── Distribution charts ───────────────────────────────────────────────
+const distConfigs = {
+  deposits: {
+    labels: ['0–2k','2–5k','5–10k','10–20k','20–50k','50k+'],
+    data:   [41, 28, 14, 8, 5, 4],
+    color:  '#E24B4A',
+    mean: '8.1k', median: '2.0k', skew: '+3.8 (right)', action: 'Log-transform'
+  },
+  visitor: {
+    labels: ['0','1–100','100–300','300–600','600–1k','1k+'],
+    data:   [65, 12, 10, 7, 4, 2],
+    color:  '#378ADD',
+    mean: '185', median: '0', skew: '+4.2 (right)', action: 'Log-transform'
+  },
+  calls: {
+    labels: ['0','1–2','3–5','6–10','11–20','20+'],
+    data:   [8, 32, 35, 15, 7, 3],
+    color:  '#7F77DD',
+    mean: '4.8', median: '3', skew: '+1.6 (right)', action: 'Use as-is'
+  },
+  normal: {
+    labels: ['−3σ','−2σ','−1σ','0','1σ','2σ','3σ'],
+    data:   [2, 14, 34, 34, 14, 2, 0],
+    color:  '#1D9E75',
+    mean: 'μ', median: 'μ', skew: '≈ 0', action: 'Use as-is'
+  }
+};
+
+let distChart = null;
+function showDist(key) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const cfg = distConfigs[key];
+  document.getElementById('d-mean').textContent   = cfg.mean;
+  document.getElementById('d-median').textContent = cfg.median;
+  document.getElementById('d-skew').textContent   = cfg.skew;
+  document.getElementById('d-action').textContent = cfg.action;
+  if (distChart) { distChart.destroy(); }
+  distChart = new Chart(document.getElementById('distChart'), {
+    type: 'bar',
+    data: {
+      labels: cfg.labels,
+      datasets: [{
+        data: cfg.data,
+        backgroundColor: cfg.color + (isDark ? 'CC' : 'AA'),
+        borderColor: cfg.color,
+        borderWidth: 1,
+        borderRadius: 3,
+        label: 'Frequency (%)'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: gridClr }, ticks: { color: txtClr, font: { size: 11 } } },
+        y: { grid: { color: gridClr }, ticks: { color: txtClr, font: { size: 11 }, callback: v => v + '%' }, beginAtZero: true }
+      }
+    }
+  });
+}
+showDist('deposits');
+
+// ── Correlation chart ─────────────────────────────────────────────────
+const corrItems = [
+  { feature: 'interested_calls',       r: 0.61,  detail: 'Each call where the lead said "Interested" strongly predicts conversion. This is your #1 feature.' },
+  { feature: 'is_referral',            r: 0.52,  detail: 'Referral leads convert at ~20% vs 3% for non-referrals — a 6× difference captured by this binary flag.' },
+  { feature: 'best_result_rank',       r: 0.48,  detail: 'The highest call outcome reached (Prospect=3, Interested=4) correlates strongly with final conversion.' },
+  { feature: 'visitor_score',          r: 0.31,  detail: 'Higher website engagement indicates genuine research interest. Moderate predictor.' },
+  { feature: 'connection_rate',        r: 0.28,  detail: 'Leads who answer calls convert more. Contactability itself signals engagement.' },
+  { feature: 'total_calls',            r: 0.21,  detail: 'More calls = more opportunity, but also more persistence. Moderate positive signal.' },
+  { feature: 'days_since_created',     r: -0.38, detail: 'Older leads go cold. Every extra day without conversion lowers the probability.' },
+  { feature: 'hours_to_first_call',    r: -0.44, detail: 'Speed-to-contact is critical. Calling within 2h vs 24h makes a major difference.' },
+  { feature: 'unanswered_streak',      r: -0.35, detail: '3+ consecutive unanswered calls at the end of history = the lead is going dark.' },
+  { feature: 'never_called',           r: -0.51, detail: 'Leads that were never called have near-zero conversion. Strongest negative predictor.' },
+];
+corrItems.sort((a,b) => a.r - b.r);
+
+const corrColors = corrItems.map(d => d.r >= 0 ? '#3266AD' : '#A32D2D');
+const corrColorsAlpha = corrItems.map(d => d.r >= 0 ? '#3266ADBB' : '#A32D2DBB');
+
+const corrChart = new Chart(document.getElementById('corrChart'), {
+  type: 'bar',
+  data: {
+    labels: corrItems.map(d => d.feature),
+    datasets: [{
+      data: corrItems.map(d => d.r),
+      backgroundColor: corrColorsAlpha,
+      borderColor: corrColors,
+      borderWidth: 1,
+      borderRadius: 3,
+      label: 'Correlation with Is Converted'
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' r = ' + ctx.raw.toFixed(2)
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: gridClr }, ticks: { color: txtClr, font: { size: 10 } }, min: -0.7, max: 0.7 },
+      y: { grid: { display: false }, ticks: { color: txtClr, font: { size: 10 } } }
+    },
+    onClick: (evt, elements) => {
+      if (!elements.length) return;
+      const item = corrItems[elements[0].index];
+      document.getElementById('corr-detail').innerHTML = `
+        <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;">${item.feature}</div>
+        <div style="font-size:22px;font-weight:500;color:${item.r>=0 ? '#185FA5' : '#A32D2D'};margin-bottom:6px;">r = ${item.r.toFixed(2)}</div>
+        <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.5;">${item.detail}</div>
+      `;
+    }
+  }
+});
+</script>
